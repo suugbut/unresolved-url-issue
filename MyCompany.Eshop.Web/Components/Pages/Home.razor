@@ -1,0 +1,61 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject CounterClient CounterClient
+
+<PageTitle>Home</PageTitle>
+
+<AuthorizeView>
+    <Authorized Context="auth">
+        <p>Authenticated: @auth.User.Identity?.IsAuthenticated</p>
+        <p>Authentication Type: @auth.User.Identity?.AuthenticationType</p>
+        <p>Name: @(auth.User.Identity?.Name ?? "(null)")</p>
+        <p>Claim Email: @auth.User.FindFirst(ClaimTypes.Email)?.Value</p>
+        <p>Claim Preferred Username: @auth.User.FindFirst("preferred_username")?.Value</p>
+
+        <form method="post" action="/logout">
+            <button type="submit">Logout</button>
+        </form>
+
+        <hr />
+        <p>Value: @(value?.ToString() ?? "-")</p>
+        <button @onclick="GetValueAsync" disabled="@loading">
+            @(loading ? "LOADING..." : "Get Value")
+        </button>
+        @if (errorMessage is not null)
+        {
+            <p role="alert">@errorMessage</p>
+        }
+    </Authorized>
+
+    <NotAuthorized>
+        <p>You are unauthenticated, please login first.</p>
+        <a href="/login">Login</a>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private int? value;
+    private bool loading;
+    private string? errorMessage;
+
+    private async Task GetValueAsync()
+    {
+        loading = true;
+        errorMessage = null;
+
+        try
+        {
+            value = await CounterClient.GetValueAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+}

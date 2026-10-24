@@ -1,0 +1,105 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\projects\\microservices\\MyCompany.Eshop\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B6B12347-12C9-4FE4-BDF5-3D5BBF1CEA7D}|MyCompany.Eshop.AppHost\\MyCompany.Eshop.AppHost.csproj|e:\\projects\\microservices\\mycompany.eshop\\mycompany.eshop.apphost\\apphost.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B6B12347-12C9-4FE4-BDF5-3D5BBF1CEA7D}|MyCompany.Eshop.AppHost\\MyCompany.Eshop.AppHost.csproj|solutionrelative:mycompany.eshop.apphost\\apphost.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BCDDA9FE-EF2F-4502-B897-22AEA2B07BAC}|MyCompany.Eshop.Web\\MyCompany.Eshop.Web.csproj|e:\\projects\\microservices\\mycompany.eshop\\mycompany.eshop.web\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{BCDDA9FE-EF2F-4502-B897-22AEA2B07BAC}|MyCompany.Eshop.Web\\MyCompany.Eshop.Web.csproj|solutionrelative:mycompany.eshop.web\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BCDDA9FE-EF2F-4502-B897-22AEA2B07BAC}|MyCompany.Eshop.Web\\MyCompany.Eshop.Web.csproj|e:\\projects\\microservices\\mycompany.eshop\\mycompany.eshop.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BCDDA9FE-EF2F-4502-B897-22AEA2B07BAC}|MyCompany.Eshop.Web\\MyCompany.Eshop.Web.csproj|solutionrelative:mycompany.eshop.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4484F038-8EE8-4221-8F2C-3CF7D4792602}|MyCompany.Eshop.ApiService\\MyCompany.Eshop.ApiService.csproj|e:\\projects\\microservices\\mycompany.eshop\\mycompany.eshop.apiservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4484F038-8EE8-4221-8F2C-3CF7D4792602}|MyCompany.Eshop.ApiService\\MyCompany.Eshop.ApiService.csproj|solutionrelative:mycompany.eshop.apiservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0174dea2-fdbe-4ef1-8f99-c0beae78880f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Home.razor",
+              "DocumentMoniker": "E:\\projects\\microservices\\MyCompany.Eshop\\MyCompany.Eshop.Web\\Components\\Pages\\Home.razor",
+              "RelativeDocumentMoniker": "MyCompany.Eshop.Web\\Components\\Pages\\Home.razor",
+              "ToolTip": "E:\\projects\\microservices\\MyCompany.Eshop\\MyCompany.Eshop.Web\\Components\\Pages\\Home.razor",
+              "RelativeToolTip": "MyCompany.Eshop.Web\\Components\\Pages\\Home.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-10-24T03:24:05.735Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AppHost.cs",
+              "DocumentMoniker": "E:\\projects\\microservices\\MyCompany.Eshop\\MyCompany.Eshop.AppHost\\AppHost.cs",
+              "RelativeDocumentMoniker": "MyCompany.Eshop.AppHost\\AppHost.cs",
+              "ToolTip": "E:\\projects\\microservices\\MyCompany.Eshop\\MyCompany.Eshop.AppHost\\AppHost.cs",
+              "RelativeToolTip": "MyCompany.Eshop.AppHost\\AppHost.cs",
+              "ViewState": "AgIAACAAAAAAAAAAAAAQwB8AAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-23T08:50:58.008Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\projects\\microservices\\MyCompany.Eshop\\MyCompany.Eshop.Web\\Program.cs",
+              "RelativeDocumentMoniker": "MyCompany.Eshop.Web\\Program.cs",
+              "ToolTip": "E:\\projects\\microservices\\MyCompany.Eshop\\MyCompany.Eshop.Web\\Program.cs",
+              "RelativeToolTip": "MyCompany.Eshop.Web\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGgAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-22T18:00:16.409Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\projects\\microservices\\MyCompany.Eshop\\MyCompany.Eshop.ApiService\\Program.cs",
+              "RelativeDocumentMoniker": "MyCompany.Eshop.ApiService\\Program.cs",
+              "ToolTip": "E:\\projects\\microservices\\MyCompany.Eshop\\MyCompany.Eshop.ApiService\\Program.cs",
+              "RelativeToolTip": "MyCompany.Eshop.ApiService\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-22T17:54:37.036Z"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 1878,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
