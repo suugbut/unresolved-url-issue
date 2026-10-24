@@ -33,25 +33,26 @@ Login credential
 */
 
 
-//var gate = builder.AddYarp("gate")
-//    .WithConfiguration(yarp =>
-//    { 
-//        yarp.AddRoute("/api/{**catch-all}", api)
-//            .WithTransformPathRemovePrefix("/api")
-//            ;
-//        yarp.AddRoute("/{**catch-all}", web)
-//            ;
-//    })
-//    .WaitFor(api)
-//    .WaitFor(web)
-//    .WithExternalHttpEndpoints();
+var gate = builder.AddYarp("gate")
+    .WithConfiguration(yarp =>
+    {
+        yarp.AddRoute("/api/{**catch-all}", api)
+            .WithTransformPathRemovePrefix("/api")
+            ;
+        yarp.AddRoute("/{**catch-all}", web)
+        .WithTransformUseOriginalHostHeader()
+            ;
+    })
+    .WaitFor(api)
+    .WaitFor(web)
+    .WithExternalHttpEndpoints();
 
 
 
 idp.WithEnvironment(ctx =>
 {
-    var http = web.GetEndpoint("http", KnownNetworkIdentifiers.LocalhostNetwork);
-    var https = web.GetEndpoint("https", KnownNetworkIdentifiers.LocalhostNetwork);
+    var http = gate.GetEndpoint("http", KnownNetworkIdentifiers.LocalhostNetwork);
+    var https = gate.GetEndpoint("https", KnownNetworkIdentifiers.LocalhostNetwork);
 
 
     if (!https.Exists)
