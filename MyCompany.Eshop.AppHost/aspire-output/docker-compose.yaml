@@ -21,16 +21,18 @@ services:
       KC_FEATURES: "opentelemetry"
       WEBAPP_CLIENT_SECRET: "${CLIENT_SECRET}"
       KC_HTTP_ENABLED: "true"
+      KC_PROXY_HEADERS: "xforwarded"
       KC_HOSTNAME_STRICT: "false"
-      WEBAPP_HTTP_CONTAINERHOST: "http://gate:5000"
-      WEBAPP_HTTP: "http://gate:5000"
-      WEBAPP_HTTPS_CONTAINERHOST: "http://gate:5000"
-      WEBAPP_HTTPS: "http://gate:5000"
+      WEBAPP_HTTP_CONTAINERHOST: "http://web:8080"
+      WEBAPP_HTTP: "Aspire.Hosting.DistributedApplicationResourceBuilder`1[Aspire.Hosting.ApplicationModel.ParameterResource]"
+      WEBAPP_HTTPS_CONTAINERHOST: "https://web:${WEB_PORT}"
+      WEBAPP_HTTPS: "Aspire.Hosting.DistributedApplicationResourceBuilder`1[Aspire.Hosting.ApplicationModel.ParameterResource]"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://docker-dashboard:18889"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_SERVICE_NAME: "idp"
     ports:
       - "8080"
+    expose:
       - "9000"
     networks:
       - "aspire"
@@ -57,7 +59,7 @@ services:
     environment:
       OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
       ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
-      HTTP_PORTS: "${WEB_PORT}"
+      HTTP_PORTS: "8080"
       Identity__ClientSecret: "${CLIENT_SECRET}"
       IDP_HTTP: "http://idp:8080"
       services__idp__http__0: "http://idp:8080"
@@ -67,39 +69,13 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://docker-dashboard:18889"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_SERVICE_NAME: "web"
-    expose:
+    ports:
+      - "5000:8080"
       - "${WEB_PORT}"
     depends_on:
       idp:
         condition: "service_started"
       api:
-        condition: "service_started"
-    networks:
-      - "aspire"
-  gate:
-    image: "mcr.microsoft.com/dotnet/nightly/yarp:2.3-preview"
-    command:
-      - "/app/yarp.dll"
-    entrypoint:
-      - "dotnet"
-    environment:
-      ASPNETCORE_ENVIRONMENT: "Production"
-      WEB_HTTP: "http://web:${WEB_PORT}"
-      REVERSEPROXY__ROUTES__route0__MATCH__PATH: "/{**catch-all}"
-      REVERSEPROXY__ROUTES__route0__CLUSTERID: "cluster_web"
-      REVERSEPROXY__ROUTES__route0__TRANSFORMS__0__RequestHeaderOriginalHost: "True"
-      REVERSEPROXY__CLUSTERS__cluster_web__DESTINATIONS__destination1__ADDRESS: "https+http://web"
-      services__web__http__0: "http://web:${WEB_PORT}"
-      WEB_HTTPS: "https://web:${WEB_PORT}"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://docker-dashboard:18889"
-      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
-      OTEL_SERVICE_NAME: "gate"
-    ports:
-      - "5000"
-    depends_on:
-      api:
-        condition: "service_started"
-      web:
         condition: "service_started"
     networks:
       - "aspire"

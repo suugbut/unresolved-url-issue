@@ -1,9 +1,10 @@
-using Aspire.Hosting.Yarp.Transforms;
-
 var builder = DistributedApplication.CreateBuilder(args);
 builder.AddDockerComposeEnvironment("docker");
 
 var clientSecret = builder.AddParameter("client-secret", secret: true);
+
+// http://localhost:5000 for test in local deployment
+var webPublicUrl = builder.AddParameter("web-public-url"); 
 
 var idp = builder.AddKeycloak(name: "idp")
     .WithDockerfile("./keycloak")
@@ -11,9 +12,9 @@ var idp = builder.AddKeycloak(name: "idp")
     .WithEnvironment("KC_BOOTSTRAP_ADMIN_PASSWORD", "admin")
     .WithEnvironment("WEBAPP_CLIENT_SECRET", clientSecret)
     .WithEnvironment("KC_HTTP_ENABLED", "true")
-    //.WithEnvironment("KC_PROXY_HEADERS", "xforwarded")
+    .WithEnvironment("KC_PROXY_HEADERS", "xforwarded")
     .WithEnvironment("KC_HOSTNAME_STRICT", "false")
-    .WithExternalHttpEndpoints()
+    .WithEndpoint("http", e => e.IsExternal = true)
     ;
 
 var api = builder
@@ -26,23 +27,15 @@ var web = builder
     .WithEnvironment("Identity__ClientSecret", clientSecret)
     .WithReference(idp).WaitFor(idp)
     .WithReference(api).WaitFor(api)
+    .WithHttpEndpoint(port: 5000, targetPort: 8080, name: "http")
+    .WithExternalHttpEndpoints()
     ;
 
-var gate = builder.AddYarp("gate")
-    .WithConfiguration(yarp =>
-    {
-        yarp.AddRoute("/{**catch-all}", web)
-            .WithTransformUseOriginalHostHeader()
-            ;
-    })
-    .WaitFor(api)
-    .WaitFor(web)
-    .WithExternalHttpEndpoints();
 
 idp.WithEnvironment(ctx =>
 {
-    var http = gate.GetEndpoint("http", KnownNetworkIdentifiers.LocalhostNetwork);
-    var https = gate.GetEndpoint("https", KnownNetworkIdentifiers.LocalhostNetwork);
+    var http = web.GetEndpoint("http");
+    var https = web.GetEndpoint("https");
 
 
     if (!https.Exists)
@@ -51,10 +44,10 @@ idp.WithEnvironment(ctx =>
     }
 
     ctx.EnvironmentVariables["WEBAPP_HTTP_CONTAINERHOST"] = http;
-    ctx.EnvironmentVariables["WEBAPP_HTTP"] = ctx.ExecutionContext.IsPublishMode ? http : http.Url;
+    ctx.EnvironmentVariables["WEBAPP_HTTP"] = ctx.ExecutionContext.IsPublishMode ? webPublicUrl : http.Url;
 
     ctx.EnvironmentVariables["WEBAPP_HTTPS_CONTAINERHOST"] = https;
-    ctx.EnvironmentVariables["WEBAPP_HTTPS"] = ctx.ExecutionContext.IsPublishMode ? https : https.Url;
+    ctx.EnvironmentVariables["WEBAPP_HTTPS"] = ctx.ExecutionContext.IsPublishMode ? webPublicUrl : https.Url;
 });
 
 
