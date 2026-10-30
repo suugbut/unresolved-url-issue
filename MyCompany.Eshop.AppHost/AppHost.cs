@@ -4,7 +4,7 @@ builder.AddDockerComposeEnvironment("docker");
 var clientSecret = builder.AddParameter("client-secret", secret: true);
 
 // http://localhost:5000 for test in local deployment
-var webPublicUrl = builder.AddParameter("web-public-url"); 
+var webPublicUrl = builder.AddParameter("web-public-url", value: "http://localhost:5000");
 
 var idp = builder.AddKeycloak(name: "idp")
     .WithDockerfile("./keycloak")
@@ -14,8 +14,11 @@ var idp = builder.AddKeycloak(name: "idp")
     .WithEnvironment("KC_HTTP_ENABLED", "true")
     .WithEnvironment("KC_PROXY_HEADERS", "xforwarded")
     .WithEnvironment("KC_HOSTNAME_STRICT", "false")
-    .WithEndpoint("http", e => e.IsExternal = true)
-    ;
+    .WithEndpoint("http", e =>
+    {
+        e.Port = 5001;
+        e.IsExternal = true;
+    });
 
 var api = builder
     .AddProject<Projects.MyCompany_Eshop_ApiService>("api")
@@ -27,9 +30,12 @@ var web = builder
     .WithEnvironment("Identity__ClientSecret", clientSecret)
     .WithReference(idp).WaitFor(idp)
     .WithReference(api).WaitFor(api)
-    .WithHttpEndpoint(port: 5000, targetPort: 8080, name: "http")
-    .WithExternalHttpEndpoints()
-    ;
+    .WithEndpoint("http", e =>
+    {
+        e.Port = 5000;
+        e.TargetPort = 8080;
+        e.IsExternal = true;
+    });
 
 
 idp.WithEnvironment(ctx =>
@@ -44,10 +50,10 @@ idp.WithEnvironment(ctx =>
     }
 
     ctx.EnvironmentVariables["WEBAPP_HTTP_CONTAINERHOST"] = http;
-    ctx.EnvironmentVariables["WEBAPP_HTTP"] = ctx.ExecutionContext.IsPublishMode ? webPublicUrl : http.Url;
+    ctx.EnvironmentVariables["WEBAPP_HTTP"] = ctx.ExecutionContext.IsPublishMode ? webPublicUrl.Resource : http.Url;
 
     ctx.EnvironmentVariables["WEBAPP_HTTPS_CONTAINERHOST"] = https;
-    ctx.EnvironmentVariables["WEBAPP_HTTPS"] = ctx.ExecutionContext.IsPublishMode ? webPublicUrl : https.Url;
+    ctx.EnvironmentVariables["WEBAPP_HTTPS"] = ctx.ExecutionContext.IsPublishMode ? webPublicUrl.Resource : https.Url;
 });
 
 

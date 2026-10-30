@@ -24,9 +24,9 @@ services:
       KC_PROXY_HEADERS: "xforwarded"
       KC_HOSTNAME_STRICT: "false"
       WEBAPP_HTTP_CONTAINERHOST: "http://web:8080"
-      WEBAPP_HTTP: "Aspire.Hosting.DistributedApplicationResourceBuilder`1[Aspire.Hosting.ApplicationModel.ParameterResource]"
+      WEBAPP_HTTP: "${WEB_PUBLIC_URL}"
       WEBAPP_HTTPS_CONTAINERHOST: "https://web:${WEB_PORT}"
-      WEBAPP_HTTPS: "Aspire.Hosting.DistributedApplicationResourceBuilder`1[Aspire.Hosting.ApplicationModel.ParameterResource]"
+      WEBAPP_HTTPS: "${WEB_PUBLIC_URL}"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://docker-dashboard:18889"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_SERVICE_NAME: "idp"
@@ -71,6 +71,7 @@ services:
       OTEL_SERVICE_NAME: "web"
     ports:
       - "5000:8080"
+    expose:
       - "${WEB_PORT}"
     depends_on:
       idp:
