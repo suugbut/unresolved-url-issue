@@ -1,6 +1,7 @@
 using Aspire.Hosting.Yarp.Transforms;
 
 var builder = DistributedApplication.CreateBuilder(args);
+builder.AddDockerComposeEnvironment("docker");
 
 var clientSecret = builder.AddParameter("client-secret", secret: true);
 
@@ -9,6 +10,9 @@ var idp = builder.AddKeycloak(name: "idp")
     .WithEnvironment("KC_BOOTSTRAP_ADMIN_USERNAME", "admin")
     .WithEnvironment("KC_BOOTSTRAP_ADMIN_PASSWORD", "admin")
     .WithEnvironment("WEBAPP_CLIENT_SECRET", clientSecret)
+    .WithEnvironment("KC_HTTP_ENABLED", "true")
+    //.WithEnvironment("KC_PROXY_HEADERS", "xforwarded")
+    .WithEnvironment("KC_HOSTNAME_STRICT", "false")
     .WithExternalHttpEndpoints()
     ;
 
@@ -24,30 +28,16 @@ var web = builder
     .WithReference(api).WaitFor(api)
     ;
 
-/*
-
-Enabling the commented part below cause error.
-Login credential
-- usernanem: test@example.com
-- password: P@$$w0rd1  (0 is zero and 1 is one)
-*/
-
-
 var gate = builder.AddYarp("gate")
     .WithConfiguration(yarp =>
     {
-        yarp.AddRoute("/api/{**catch-all}", api)
-            .WithTransformPathRemovePrefix("/api")
-            ;
         yarp.AddRoute("/{**catch-all}", web)
-        .WithTransformUseOriginalHostHeader()
+            .WithTransformUseOriginalHostHeader()
             ;
     })
     .WaitFor(api)
     .WaitFor(web)
     .WithExternalHttpEndpoints();
-
-
 
 idp.WithEnvironment(ctx =>
 {

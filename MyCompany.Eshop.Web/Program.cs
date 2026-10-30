@@ -44,7 +44,7 @@ builder.Services
             options.ClientSecret = builder.Configuration.GetValue<string>("Identity:ClientSecret");
             options.ResponseType = OpenIdConnectResponseType.Code;
             options.SaveTokens = true;
-            options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
+            options.RequireHttpsMetadata = false;// !builder.Environment.IsDevelopment();
             options.MapInboundClaims = false;
             options.TokenValidationParameters = new TokenValidationParameters
             {

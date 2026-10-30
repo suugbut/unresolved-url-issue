@@ -1,0 +1,108 @@
+services:
+  docker-dashboard:
+    image: "mcr.microsoft.com/dotnet/nightly/aspire-dashboard:13.6"
+    ports:
+      - "18888"
+    expose:
+      - "18889"
+      - "18890"
+    networks:
+      - "aspire"
+    restart: "always"
+  idp:
+    image: "${IDP_IMAGE}"
+    command:
+      - "start"
+      - "--import-realm"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: "admin"
+      KC_BOOTSTRAP_ADMIN_PASSWORD: "admin"
+      KC_HEALTH_ENABLED: "true"
+      KC_FEATURES: "opentelemetry"
+      WEBAPP_CLIENT_SECRET: "${CLIENT_SECRET}"
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      WEBAPP_HTTP_CONTAINERHOST: "http://gate:5000"
+      WEBAPP_HTTP: "http://gate:5000"
+      WEBAPP_HTTPS_CONTAINERHOST: "http://gate:5000"
+      WEBAPP_HTTPS: "http://gate:5000"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://docker-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "idp"
+    ports:
+      - "8080"
+      - "9000"
+    networks:
+      - "aspire"
+  api:
+    image: "${API_IMAGE}"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${API_PORT}"
+      IDP_HTTP: "http://idp:8080"
+      services__idp__http__0: "http://idp:8080"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://docker-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "api"
+    expose:
+      - "${API_PORT}"
+    depends_on:
+      idp:
+        condition: "service_started"
+    networks:
+      - "aspire"
+  web:
+    image: "${WEB_IMAGE}"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${WEB_PORT}"
+      Identity__ClientSecret: "${CLIENT_SECRET}"
+      IDP_HTTP: "http://idp:8080"
+      services__idp__http__0: "http://idp:8080"
+      API_HTTP: "http://api:${API_PORT}"
+      services__api__http__0: "http://api:${API_PORT}"
+      API_HTTPS: "https://api:${API_PORT}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://docker-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "web"
+    expose:
+      - "${WEB_PORT}"
+    depends_on:
+      idp:
+        condition: "service_started"
+      api:
+        condition: "service_started"
+    networks:
+      - "aspire"
+  gate:
+    image: "mcr.microsoft.com/dotnet/nightly/yarp:2.3-preview"
+    command:
+      - "/app/yarp.dll"
+    entrypoint:
+      - "dotnet"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      WEB_HTTP: "http://web:${WEB_PORT}"
+      REVERSEPROXY__ROUTES__route0__MATCH__PATH: "/{**catch-all}"
+      REVERSEPROXY__ROUTES__route0__CLUSTERID: "cluster_web"
+      REVERSEPROXY__ROUTES__route0__TRANSFORMS__0__RequestHeaderOriginalHost: "True"
+      REVERSEPROXY__CLUSTERS__cluster_web__DESTINATIONS__destination1__ADDRESS: "https+http://web"
+      services__web__http__0: "http://web:${WEB_PORT}"
+      WEB_HTTPS: "https://web:${WEB_PORT}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://docker-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "gate"
+    ports:
+      - "5000"
+    depends_on:
+      api:
+        condition: "service_started"
+      web:
+        condition: "service_started"
+    networks:
+      - "aspire"
+networks:
+  aspire:
+    driver: "bridge"

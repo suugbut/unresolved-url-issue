@@ -12,7 +12,7 @@ builder.Services.AddAuthentication()
         configureOptions: options =>
         {
             options.Audience = "account";
-            options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
+            options.RequireHttpsMetadata = false; // !builder.Environment.IsDevelopment();
             options.MapInboundClaims = false;
             options.TokenValidationParameters = new TokenValidationParameters
             {
